@@ -1,0 +1,218 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OpenQA.Selenium;
+using System.Data;
+using System.Data.OleDb;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
+using System.IO;
+
+namespace Geico_Project
+{
+    public class Geico_Automation
+    {
+        IWebDriver driver = new ChromeDriver(@"C:\Users\u0oc75\Documents\Chrome driver");
+        public void openURL(String Appurl)
+        {
+            // IWebDriver driver = new ChromeDriver();
+            driver.Url = Appurl;
+            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(50));
+        }
+
+        public void EnterData(string Controltype,String Controlvalue,String Inputval)
+        {
+            switch(Controltype)
+            {
+                case ("ID"):
+                    driver.FindElement(By.Id(Controlvalue)).SendKeys(Inputval);
+                    resultsfile("Pass","Entered successfully");
+                    break;
+                case ("NAME"):
+                    driver.FindElement(By.Name(Controlvalue)).SendKeys(Inputval);
+                    resultsfile("Pass", "Entered successfully");
+                    break;
+                case ("XPATH"):
+                    driver.FindElement(By.XPath(Controlvalue)).SendKeys(Inputval);
+                    resultsfile("Pass", "Entered successfully");
+                    break;
+                default:
+                    Console.WriteLine("no control matched");
+                    resultsfile("Fail", "Control not found");
+                    break;
+            }
+        }
+        public void selectValue(string Controltype,String Controlvalue,String Valuetoselect)
+        {
+            switch (Controltype)
+            {
+
+                case ("ID"):
+                    IWebElement element = driver.FindElement(By.Id(Controlvalue));
+                            SelectElement s=new SelectElement(element);
+                            s.SelectByValue(Valuetoselect);
+                            break;
+                case ("NAME"):
+                            IWebElement element1 = driver.FindElement(By.Name(Controlvalue));
+                            SelectElement s1=new SelectElement(element1);
+                            s1.SelectByValue(Valuetoselect);
+                            break;
+                    
+                case ("XPATH"):
+                    IWebElement element2 = driver.FindElement(By.XPath(Controlvalue));
+                        SelectElement s2 = new SelectElement(element2);
+                        s2.SelectByValue(Valuetoselect);
+                            break;
+                default:
+                            Console.WriteLine("no control matched");
+                            break;
+            }
+        }
+        public void ButtonClick(string Controltype,String ControlValue)
+        {
+            switch (Controltype)
+            {
+                case ("ID"):
+                    driver.FindElement(By.Id(ControlValue)).Click();
+                    driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(50));
+                    break;
+                case ("NAME"):
+                    driver.FindElement(By.Name(ControlValue)).Click();
+                    driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(50));
+                    break;
+                case ("XPATH"):
+                    driver.FindElement(By.XPath(ControlValue)).Click();
+                    driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(50));
+                    break;
+                default:
+                    Console.WriteLine("no control matched");
+                    break;
+            }
+        }
+        public void RadiobuttonCheckboxClick(string Controltype)
+        {
+            bool bvalue=false;
+            //switch (Controltype)
+            //{
+                IList<IWebElement> radiobutton= driver.FindElements(By.Name(""));
+                 int size=radiobutton.Count();
+                     for (int i=0;i<=size;i++)
+                        {
+                            String val=radiobutton.ElementAt(i).GetAttribute("value");
+                            bvalue=radiobutton.ElementAt(i).Selected;
+                            if (val=="")
+                            {
+                                if(bvalue==true)
+                                {
+                                    Console.WriteLine("Check box or radio button already been selected");
+
+                                }
+                                else
+                                {
+                                    radiobutton.ElementAt(i).Click();
+
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("radio button or check box not found");
+                            }
+                         }
+            }
+       public String excelread(String Sheetname,int intr)
+       {
+           String val = "";
+           string Path="C:\\Users\\u0oc75\\Documents\\Testplans\\Sample.xls";
+       string  connstring="Provider=Microsoft.Jet.OLEDB.4.0;"
++"Data Source="+ Path +";"+"Extended Properties=Excel 8.0;";
+            OleDbConnection conn = new OleDbConnection(connstring);
+            conn.Open();
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+            DataTable dt = new DataTable();
+
+           // foreach (var sheetname in getExcelsheetNames(connstring))
+            //DataTable dtdheet = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+           cmd.CommandText="Select * from ["+Sheetname+"$]";
+           cmd.Connection = conn;
+           OleDbDataAdapter da = new OleDbDataAdapter();
+           DataSet ds = new DataSet();
+           
+           da.SelectCommand = cmd;
+           da.Fill(dt);
+           da.Fill(ds);
+           int r = ds.Tables[0].Rows.Count;
+           int c = ds.Tables[0].Columns.Count;
+          String  strcttype = Convert.ToString(ds.Tables[0].Rows[intr]["ControlType"]);
+           String ctrvalue =  Convert.ToString(ds.Tables[0].Rows[intr]["ControlValue"]);
+           String ctrinput =  Convert.ToString(ds.Tables[0].Rows[intr]["Input"]);
+           val = strcttype + "," + ctrvalue + "," + ctrinput;
+           return val;
+
+
+       }
+        public String[] getExcelsheetNames(String connstring)
+       {
+           OleDbConnection conn = new OleDbConnection(connstring);
+           conn.Open();
+           OleDbCommand cmd = new OleDbCommand();
+           cmd.Connection = conn;
+          // DataTable dt = new DataTable();
+
+
+           DataTable dtdheet = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+           String[] excelSheetNames = new String[dtdheet.Rows.Count];
+           int i = 0;
+           foreach (DataRow row in dtdheet.Rows)
+           {
+               excelSheetNames[i] = row["TABLE_NAME"].ToString();
+               i++;
+           }
+           return excelSheetNames;
+       }
+        public int getRowcount(String Sheetname)
+        {
+            string Path = "C:\\Users\\u0oc75\\Documents\\Testplans\\Sample.xls";
+            string connstring = "Provider=Microsoft.Jet.OLEDB.4.0;"
+     + "Data Source=" + Path + ";" + "Extended Properties=Excel 8.0;";
+            OleDbConnection conn = new OleDbConnection(connstring);
+            conn.Open();
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+            DataTable dt = new DataTable();
+            cmd.CommandText = "Select * from [" + Sheetname + "$]";
+            cmd.Connection = conn;
+            OleDbDataAdapter da = new OleDbDataAdapter();
+            DataSet ds = new DataSet();
+            da.SelectCommand = cmd;
+            da.Fill(ds);
+            int r = ds.Tables[0].Rows.Count;
+            return r;
+        }
+        public void resultsfile(String Result,String Result1)
+        {
+            String path = "C:\\Users\\u0oc75\\Documents\\Testplans\\Resultfile"+DateTime.Now.Day+DateTime.Now.Month+DateTime.Now.Year+".txt";
+            if(!File.Exists(path))
+            {
+               //File.Create(path);
+
+                StreamWriter tw = File.CreateText(path);
+                tw.Close();
+                TextWriter tw1 = new StreamWriter(path);
+                tw1.WriteLine(Result+":"+Result1);
+                tw1.Close();
+
+
+            }
+            else if(File.Exists(path))
+            {
+                TextWriter tw = new StreamWriter(path,true);
+                tw.WriteLine(Result + ":" + Result1);
+                tw.Close();
+            }
+        }
+    }
+}
