@@ -29,30 +29,11 @@ namespace DriverScript_Geico
                 String strvalue = qa.excelread("Customer",vari);
                 String[] substring = strvalue.Split(',');
                 qa.EnterData(substring[0], substring[1],substring[2]);
-                //qa.EnterData("ID", "lastName", "Murali");
-                //qa.EnterData("ID", "street", "Murali");
-                //qa.EnterData("ID", "apt", "Murali");
-                //qa.EnterData("ID", "zip", "24501");
-                //qa.EnterData("ID", "date-monthdob", "10");
-                //qa.EnterData("ID", "date-daydob", "10");
-                //qa.EnterData("ID", "date-yeardob", "1989");
-                //qa.ButtonClick("ID", "btnSubmit");
-                //qa.selectValue("ID", "vehicleYear", "2014");
+                
 
             }
-            //qa.EnterData("ID", "firstName", "Murali");
-            //qa.EnterData("ID", "lastName", "Murali");
-            //qa.EnterData("ID", "street", "Murali");
-            //qa.EnterData("ID", "apt", "Murali");
-            //qa.EnterData("ID", "zip", "24501");
-            //qa.EnterData("ID", "date-monthdob", "10");
-            //qa.EnterData("ID", "date-daydob", "10");
-            //qa.EnterData("ID", "date-yeardob", "1989");
-            //qa.ButtonClick("ID", "btnSubmit");
-            //qa.selectValue("ID", "vehicleYear", "2014");
-          //String q=  qa.excelread().ToString();
-
-        //  Console.WriteLine("" + q);
+            
+        
 
             
         }
