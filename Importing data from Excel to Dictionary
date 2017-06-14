@@ -1,0 +1,45 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections;
+using System.Collections.Generic;
+using Excel = Microsoft.Office.Interop.Excel;
+
+namespace UnitTestProject2074
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        [TestMethod]
+        public static void importDataToDictionary()
+
+        {
+
+            Excel.Application xlApp = new Excel.Application();
+
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Administrator\Documents\Visual Studio 2015\datasheet.xlsx");
+
+            Excel.Worksheet xlSheet = xlWorkbook.Sheets[1];
+
+            Excel.Range xlRange = xlSheet.UsedRange;
+
+            Dictionary<string, Tuple<object, object, object>> dict = new Dictionary<string, Tuple<object, object, object>>();
+            for (int i = 2; i <= xlRange.Rows.Count; i++)
+            {
+                for (int j = 1; j < xlRange.Columns.Count; j++)
+                {
+                    string key = xlRange.Rows.Cells[i, j].value2;
+                    j++;
+                    object val1 = xlRange.Columns.Cells[i, j].value2; j++;
+                    object val2 = xlRange.Columns.Cells[i, j].value2; j++;
+                    object val3 = xlRange.Columns.Cells[i, j].value2;
+
+                    dict.Add(key, new Tuple<object, object, object>(val1, val2, val3));
+                }
+            }
+            foreach(KeyValuePair<string, Tuple<object,object,object>> kvpair in dict)
+            {
+                Console.WriteLine(kvpair.Key + " " + kvpair.Value);
+            }
+        }
+    }
+}
